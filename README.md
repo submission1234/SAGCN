@@ -9,6 +9,14 @@ https://www.crcv.ucf.edu/research/data-sets/ucf101/	UCF101
 
 Confusion matrix  
 
-early fusion
+audio  branch
+![Confusion matrix](figs/audio.png "Early fusion confusion matrix")
+visual  branch
+![Confusion matrix](figs/visual.png "Early fusion confusion matrix")
+early fusion  
 ![Confusion matrix](figs/early.png "Early fusion confusion matrix")
+GCN
+![Confusion matrix](figs/GCN.png "GCN confusion matrix")
+SAGCN(Ours)  
+![Confusion matrix](figs/SAGCN.png "SAGCN confusion matrix")
 
