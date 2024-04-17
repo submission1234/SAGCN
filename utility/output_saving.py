@@ -3,7 +3,7 @@ The base model outputs for each data set (train, val, test) is saved.
 """
 import torch
 
-from models import AudioVGGishModel, VisualResnetModel, AudioSFModel
+from models import AudioVGGishModel, AudioL3Model, VisualResnetModel, VisualL3Model, AudioSFModel
 from definitions import (BEST_AUDIO_VGGISH_MODEL,
                          BEST_VISUAL_RESNET_MODEL,
                          VISUAL_RESNET_TEST_FEATURES_FILE,
@@ -21,8 +21,8 @@ from definitions import (BEST_AUDIO_VGGISH_MODEL,
                          VISUAL_RESNET_TRAIN_FEATURES_FILE,
                          VISUAL_RESNET_VAL_FEATURES_FILE,
                          MODELS_TRAIN_OUTPUTS_FILE, MODELS_VAL_OUTPUTS_FILE, AUDIO_SF_EMBED, BEST_SELFATTENTION_MODEL)
-from utility.fusion_functions import save_model_outputs
-from utility.utilities import FusionData, load_model, create_multiple_features
+from fusion_functions import save_model_outputs
+from utilities import FusionData, load_model, create_multiple_features
 import torch.nn as nn
 if __name__ == '__main__':
     # model = nn.DataParallel(model).cuda()

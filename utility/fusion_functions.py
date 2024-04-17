@@ -17,6 +17,10 @@ from utility.global_utilities import create_file_directory
 torch.manual_seed(SEED)
 
 
+#Floss=nn.CosineEmbeddingLoss()
+Floss=nn.CrossEntropyLoss()
+#Floss=nn.MultiLabelSoftMarginLoss()
+
 class FeatureDataCollection(Dataset):
     def __init__(self, fusion_data: List[Union[np.ndarray, torch.Tensor]]):
         """
@@ -109,7 +113,7 @@ def train_nn_combiner_model(model: nn.Module,
     create_file_directory(best_model)
 
     model = model.to(device)
-    criterion = nn.CrossEntropyLoss().to(device)
+    criterion = Floss.to(device)
 
     train_loader = DataLoader(FeatureDataCollection(train_data),
                               batch_size=batch_size, shuffle=True, drop_last=True)
@@ -202,7 +206,6 @@ def train_nn_combiner(loader: DataLoader, model: nn.Module, criterion: nn.Module
             samples = batch_samples[mini_idx]
             inputs[mini_idx] = samples
 
-        # seq_len = torch.sum(torch.max(torch.abs(input), dim=2)[0] > 0, 1)
         outputs = model(inputs)
         # seq_len = torch.sum(torch.max(torch.abs(inputs), dim=2)[0] > 0, 1)
         # outputs = model(inputs, seq_len)
@@ -292,7 +295,7 @@ def test_nn_combiner(model: nn.Module,
     """
     model = model.to(device)
 
-    criterion = nn.CrossEntropyLoss().to(device)
+    criterion = Floss.to(device)
 
     if verbose:
         print("Testing model ...")
@@ -305,10 +308,9 @@ def test_nn_combiner(model: nn.Module,
     error_batch = 0
     running_loss = 0
     n = len(loader.dataset)
+
     model.eval()
     batch_idx = 0
-    cor_num = 0
-
     for batch_idx, data in enumerate(loader):
         batch_samples = data[0].contiguous().to(device)
         batch_samples = batch_prediction_processing(batch_samples)
@@ -332,10 +334,6 @@ def test_nn_combiner(model: nn.Module,
             loss = criterion(outputs, labels)
             running_loss += loss.data.item()
             correct += torch.sum(torch.argmax(outputs, dim=1) == labels).item()
-            cor_num = torch.sum(torch.argmax(outputs, dim=1) == labels).item()
-            print('labels:',labels)
-            print('preds:',torch.argmax(outputs, dim=1))
-            print('cor_num:',cor_num)
         error_batch += torch.sum(torch.argmax(outputs, dim=1) != labels).item()
         # print(torch.argmax(outputs, dim=1) != labels)
         # print(error_batch)
@@ -371,7 +369,7 @@ def test_single_model(model: nn.Module, all_data: List[torch.Tensor],
         model's accuracy and predicted labels
     """
     test_loader = DataLoader(FeatureDataCollection(all_data),
-                             batch_size=25)
+                             batch_size=32)
 
     preds = torch.zeros(LABEL_COUNT, dtype=torch.long).to(device)
     correct = 0
@@ -385,7 +383,6 @@ def test_single_model(model: nn.Module, all_data: List[torch.Tensor],
         labels = labels.to(device)
 
         mini_length = len(labels)
-        # inputs = torch.empty((mini_length, 3, LABEL_COUNT), device=device)
         with torch.no_grad():
             for mini_idx in range(mini_length):
                 model_output = model(samples[mini_idx])

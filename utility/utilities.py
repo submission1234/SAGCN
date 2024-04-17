@@ -64,15 +64,10 @@ class FusionData:
                 #     else:
                 #         samples = np.reshape(samples,
                 #                              (len(samples), feature.vector_count // 10, feature.embed_size))  # 就是这里的问题不应该除10
-                # samples = samples.reshape(7296, 10)
-                if len(samples)==2432:
-                    samples = np.reshape(samples,
-                                         (len(samples),
-                                          feature.vector_count, 3))
-                else:
-                    samples = np.reshape(samples,
-                                         (len(samples) // feature.vector_count,
-                                          feature.vector_count, feature.embed_size))
+
+                samples = np.reshape(samples,
+                                     (len(samples) // feature.vector_count,
+                                      feature.vector_count, feature.embed_size))
             self.all_data.append(samples)
 
             if idx == len(features)-1:
@@ -82,6 +77,7 @@ class FusionData:
                     labels = labels[::feature.vector_count]
 
                 self.all_data.append(labels)
+
 
     def get_data(self) -> List[np.ndarray]:
         """
