@@ -7,7 +7,7 @@ https://www.crcv.ucf.edu/research/data-sets/ucf101/	UCF101
 93.1% on TAU2021  
 95.0% on UCF  
 
-Confusion matrix  
+### Confusion matrix  
 audio  branch  
 ![Confusion matrix](figs/audio.png "Early fusion confusion matrix")  
 visual  branch  
