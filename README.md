@@ -5,5 +5,10 @@ https://www.crcv.ucf.edu/research/data-sets/ucf101/	UCF101
 
 ## Result
 93.1% on TAU2021  
-95.0% on UCF
+95.0% on UCF  
+
+Confusion matrix  
+
+early fusion
+![Confusion matrix](figs/early.png "Early fusion confusion matrix")
 
