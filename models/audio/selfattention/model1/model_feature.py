@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Oct 27 00:02:30 2020
+
+@author: krishna
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+     http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+"""
+
+import torch
+import torch.nn as nn
+from .transformers import TransformerEncoderLayer
+
+
+# class ConvBlocks(nn.Module):
+#     def __init__(self, ):
+#         super(ConvBlocks, self).__init__()
+#         self.conv = nn.Sequential(
+#             nn.Conv2d(1, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(64),
+#             nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(64),
+#             nn.MaxPool2d(kernel_size=2, stride=2),
+#             nn.ReLU(),
+
+#             nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(128),
+#             nn.Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(128),
+#             nn.MaxPool2d(kernel_size=2, stride=2),
+#             nn.ReLU(),
+
+#             nn.Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(256),
+#             nn.Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(256),
+#             nn.Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(256),
+#             nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2)),
+#             nn.ReLU(),
+
+#             nn.Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(512),
+#             nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(512),
+#             nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(512),
+#             nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1)),
+#             nn.ReLU(),
+
+#             nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(512),
+#             nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(512),
+#             nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+#             nn.BatchNorm2d(512),
+#             nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1)),
+#             nn.ReLU(),
+#         )
+
+#     def forward(self, inputs):
+#         out = self.conv(inputs)
+#         out = out.flatten(start_dim=1, end_dim=2)
+#         return out
+
+# class Model_Feature(nn.Module):
+#     def __init__(self, num_classes=10):
+#         super(Model_Feature, self).__init__()
+#         self.num_classes = num_classes
+
+#         self.conv = ConvBlocks()
+#         self.blstm = nn.LSTM(1024, hidden_size=int(320 / 2), bidirectional=True, batch_first=True)
+#         # self.blstm = nn.LSTM(1024, hidden_size=int(32 / 2), bidirectional=True, batch_first=True)
+#         # self.mha = TransformerEncoderLayer(embed_dim=32, num_heads=8, temp=0.2)
+#         self.mha = TransformerEncoderLayer(embed_dim=320, num_heads=10, temp=0.2)
+#         self.fc1 = nn.Linear(320, 512)
+#         self.fc2 = nn.Linear(512, self.num_classes)
+#         self.fc3 = nn.Linear(320, 32)
+#         self.fc4 = nn.Linear(156, 10)
+
+#     def forward(self, inputs):
+#         cnn_out = self.conv(inputs)
+#         cnn_out = cnn_out.permute(0, 2, 1)
+#         rnn_out, _ = self.blstm(cnn_out)
+#         rnn_out = rnn_out.permute(1, 0, 2)
+#         mha_out = self.mha(rnn_out)
+#         # mha_out = mha_out.permute(1, 0, 2)
+#         pooled = torch.mean(mha_out, dim=1)
+#         f3_out = self.fc3(pooled)  # 156*32
+#         f3_out = f3_out.permute(1, 0)  # 32*156
+#         f4_out = self.fc4(f3_out)
+#         f4_out = f4_out.permute(1, 0)
+#         # fc1_out = self.fc1(pooled)
+#         # out = self.fc2(fc1_out)
+#         return f4_out
+    
+class ConvBlocks(nn.Module):
+    def __init__(self, ):
+        super(ConvBlocks, self).__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(1, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(64),
+            nn.Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(64),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.ReLU(),
+
+            nn.Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(128),
+            nn.Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(128),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.ReLU(),
+
+            nn.Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(256),
+            nn.Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(256),
+            nn.Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(256),
+            nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2)),
+            nn.ReLU(),
+
+            nn.Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(512),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(512),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(512),
+            nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1)),
+            nn.ReLU(),
+
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(512),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(512),
+            nn.Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(512),
+            nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1)),
+            nn.ReLU(),
+        )
+
+    def forward(self, inputs):
+        out = self.conv(inputs)
+        out = out.flatten(start_dim=1, end_dim=2)
+        return out
+
+class Model_Feature(nn.Module):
+    def __init__(self, num_classes=10):
+        super(Model_Feature, self).__init__()
+        self.num_classes = num_classes
+
+        self.conv = ConvBlocks()
+        self.blstm = nn.LSTM(1024, hidden_size=int(320 / 2), bidirectional=True, batch_first=True)
+        # self.blstm = nn.LSTM(1024, hidden_size=int(32 / 2), bidirectional=True, batch_first=True)
+        # self.mha = TransformerEncoderLayer(embed_dim=32, num_heads=8, temp=0.2)
+        self.mha = TransformerEncoderLayer(embed_dim=320, num_heads=10, temp=0.2)
+        self.fc1 = nn.Linear(320, 512)
+        self.fc2 = nn.Linear(512, self.num_classes)
+        self.fc3 = nn.Linear(320, 32)
+        self.fc4 = nn.Linear(156, 10)
+
+    def forward(self, inputs):
+        cnn_out = self.conv(inputs)
+        cnn_out = cnn_out.permute(0, 2, 1)
+        rnn_out, _ = self.blstm(cnn_out)
+        rnn_out = rnn_out.permute(1, 0, 2)
+        mha_out = self.mha(rnn_out)
+        # mha_out = mha_out.permute(1, 0, 2)
+        pooled = torch.mean(mha_out, dim=1)
+        f3_out = self.fc3(pooled)  # 156*32
+        f3_out = f3_out.permute(1, 0)  # 32*156
+        f4_out = self.fc4(f3_out)
+        f4_out = f4_out.permute(1, 0)
+        # fc1_out = self.fc1(pooled)
+        # out = self.fc2(fc1_out)
+        return f4_out
+
+
+
+
+
+
+
